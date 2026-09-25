@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steam Paraguay - Tienda Pro</title>
+  <style>
+    :root {
+      --bg-dark: #0e141b;
+      --bg-header: #171a21;
+      --bg-card: #16202d;
+      --accent-blue: #66c0f4;
+      --accent-green: #a4d007;
+      --btn-green: linear-gradient(90deg, #75b022 0%, #588a1b 100%);
+      --text-muted: #8f98a0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: #c6d4df;
+      font-family: "Motiva Sans", Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Top Bar */
+    header {
+      background-color: var(--bg-header);
+      padding: 0 10%;
+      height: 65px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo span { color: var(--accent-blue); font-size: 0.8rem; background: #213040; padding: 2px 6px; border-radius: 3px; }
+
+    .nav-actions { display: flex; align-items: center; gap: 15px; }
+    .cart-btn-header {
+      background: #101822;
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 8px 16px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .cart-btn-header:hover { background: var(--accent-blue); color: #000; }
+
+    /* Store Subnav & Search */
+    .store-nav {
+      background: linear-gradient(90deg, #1f2f42 0%, #111822 100%);
+      padding: 12px 10%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a475e;
+    }
+    .categories-filter { display: flex; gap: 10px; }
+    .cat-chip {
+      background: rgba(0,0,0,0.2);
+      padding: 6px 12px;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: 0.2s;
+    }
+    .cat-chip:hover, .cat-chip.active { border-color: var(--accent-blue); color: #fff; background: rgba(102, 192, 244, 0.1); }
+
+    .search-box input {
+      background-color: #316282;
+      border: 1px solid #000;
+      border-radius: 3px;
+      padding: 7px 12px;
+      color: #fff;
+      outline: none;
+      width: 220px;
+      transition: 0.3s;
+    }
+    .search-box input:focus { width: 280px; background-color: #45789c; }
+
+    .container { max-width: 1100px; margin: 25px auto; padding: 0 15px; }
+
+    /* Feature Showcase (Hero Carousel) */
+    .hero {
+      background: #0a0f14;
+      display: flex;
+      height: 360px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 35px;
+    }
+    .hero-main-img {
+      width: 65%;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 0.3s ease-in-out;
+    }
+    .hero-sidebar {
+      width: 35%;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #101822;
+    }
+    .hero-title { font-size: 1.5rem; color: #fff; margin-bottom: 10px; }
+    .hero-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; }
+    .hero-thumb {
+      height: 60px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 2px;
+      opacity: 0.6;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .hero-thumb:hover, .hero-thumb.active { opacity: 1; border: 2px solid var(--accent-blue); }
+
+    /* Price Tags */
+    .price-tag {
+      display: inline-flex;
+      align-items: center;
+      background: #000;
+    }
+    .discount-badge {
+      background: #4c6b22;
+      color: var(--accent-green);
+      font-weight: bold;
+      padding: 4px 8px;
+      font-size: 1.1rem;
+    }
+    .final-price {
+      padding: 4px 10px;
+      color: #acdbf5;
+      font-weight: bold;
+    }
+
+    /* Grid & Cards */
+    .section-title {
+      color: #fff;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      border-left: 4px solid var(--accent-blue);
+      padding-left: 10px;
+      text-transform: uppercase;
+    }
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .game-card {
+      background: var(--bg-card);
+      border-radius: 3px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    .game-card img { width: 100%; height: 135px; object-fit: cover; }
+    .card-body { padding: 12px; }
+    .card-title { color: #fff; font-weight: bold; font-size: 0.95rem; margin-bottom: 5px; }
+    .card-tags { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    
+    .btn-action {
+      background: var(--btn-green);
+      color: #d2efa9;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+    .btn-action:hover { color: #fff; }
+
+    /* Modal de Detalles de Juego */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 300;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: #1b2838;
+      width: 90%;
+      max-width: 700px;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      border: 1px solid #2a475e;
+    }
+    .modal-header { padding: 15px 20px; background: #171a21; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h2 { color: #fff; }
+    .modal-body { padding: 20px; display: flex; gap: 20px; }
+    .modal-body img { width: 50%; border-radius: 4px; object-fit: cover; }
+    .modal-info { width: 50%; display: flex; flex-direction: column; justify-content: space-between; }
+
+    /* Slide Cart Drawer */
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -380px; width: 380px; height: 100%;
+      background: #121923;
+      box-shadow: -5px 0 20px rgba(0,0,0,0.8);
+      transition: right 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .cart-drawer.open { right: 0; }
+    .cart-items { flex-grow: 1; overflow-y: auto; margin: 15px 0; }
+    .cart-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #1b2838; padding: 10px; margin-bottom: 8px; border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">STEAM <span>PARAGUAY PRO</span></div>
+    <div class="nav-actions">
+      <button class="cart-btn-header" onclick="toggleCart()">
+        🛒 Carrito (<span id="cart-count">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <div class="store-nav">
+    <div class="categories-filter">
+      <div class="cat-chip active" onclick="filterCategory('Todos', this)">Todos</div>
+      <div class="cat-chip" onclick="filterCategory('Acción', this)">Acción</div>
+      <div class="cat-chip" onclick="filterCategory('RPG', this)">RPG</div>
+      <div class="cat-chip" onclick="filterCategory('Deportes', this)">Deportes</div>
+      <div class="cat-chip" onclick="filterCategory('Indie', this)">Indie</div>
+    </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" onkeyup="renderGames()" placeholder="Buscar en la tienda...">
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- Hero Showcase Carousel -->
+    <div class="hero" id="heroShowcase">
+      <div class="hero-main-img" id="heroImg"></div>
+      <div class="hero-sidebar">
+        <div>
+          <h2 class="hero-title" id="heroTitle">Cargando...</h2>
+          <p id="heroDesc" style="font-size: 0.85rem; color: var(--text-muted);"></p>
+          <div class="hero-thumbs" id="heroThumbs"></div>
+        </div>
+        <div>
+          <div class="price-tag" style="margin-bottom: 10px;">
+            <span class="discount-badge" id="heroDiscount">-50%</span>
+            <span class="final-price" id="heroPrice">Gs. 0</span>
+          </div>
+          <button class="btn-action" style="width: 100%; padding: 10px;" id="heroBuyBtn">Añadir al carro</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catálogo Principal -->
+    <div class="section-title">Catálogo Completo</div>
+    <div class="game-grid" id="gameGrid"></div>
+  </div>
+
+  <!-- Modal de Detalles -->
+  <div class="modal-overlay" id="gameModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Título del Juego</h2>
+        <span style="cursor:pointer; color:#fff; font-size: 1.2rem;" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <img id="modalImg" src="" alt="">
+        <div class="modal-info">
+          <p id="modalDesc" style="font-size: 0.9rem; color: #c6d4df;"></p>
+          <div>
+            <p style="font-weight: bold; margin-bottom: 10px; color: var(--accent-blue);" id="modalPrice">Gs. 0</p>
+            <button class="btn-action" id="modalBuyBtn" style="width: 100%; padding: 10px;">Añadir al Carrito</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slider de Carrito -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a475e; padding-bottom: 10px;">
+      <h3 style="color: #fff;">Tu Carrito de Compras</h3>
+      <span style="cursor:pointer; color:#fff; font-size: 1.5rem;" onclick="toggleCart()">&times;</span>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div style="border-top: 1px solid #2a475e; padding-top: 15px;">
+      <div style="display: flex; justify-content: space-between; color: #fff; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px;">
+        <span>Total:</span>
+        <span id="cartTotal">Gs. 0</span>
+      </div>
+      <button class="btn-action" style="width: 100%; padding: 12px; background: linear-gradient(90deg, #66c0f4 0%, #1b4965 100%); color: #fff;" onclick="checkout()">Finalizar Compra</button>
+    </div>
+  </div>
+
+  <script>
+    const games = [
+      {
+        id: 1, title: "Cyberpunk 2077: Phantom Liberty", category: "RPG", price: 210000, discount: 40,
+        desc: "Sumérgete en el papel de V, un mercenario mejorado cibernéticamente en la megalópolis de Night City.",
+        img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80",
+        screens: [
+          "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+          "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80"
+        ]
+      },
+      {
+        id: 2, title: "Elden Ring: Shadow of the Erdtree", category: "RPG", price: 260000, discount: 0,
+        desc: "Un RPG de acción sobrecogedor ambientado en un rico mundo de fantasía oscura creado por Hidetaka Miyazaki.",
+        img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+        screens: [
+          "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80",
+          "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=400&q=80"
+        ]
+      },
+      {
+        id: 3, title: "EA SPORTS FC 24", category: "Deportes", price: 320000, discount: 60,
+        desc: "La experiencia futbolística más auténtica hasta la fecha conHyperMotionV y atletas reales.",
+        img: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
+        screens: ["https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80"]
+      },
+      {
+        id: 4, title: "Hollow Knight: Silksong", category: "Indie", price: 85000, discount: 0,
+        desc: "Juega como Hornet, la princesa y protectora de Hallownest, y aventúrate en un nuevo reino totalmente desconocido.",
+        img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=800&q=80",
+        screens: ["https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=400&q=80"]
+      },
+      {
+        id: 5, title: "Counter-Strike 2", category: "Acción", price: 0, discount: 0,
+        desc: "El avance técnico más importante en la historia de Counter-Strike, impulsado por el motor Source 2.",
+        img: "https://images.unsplash.com/photo-1552824728-8b138121f000?auto=format&fit=crop&w=800&q=80",
+        screens: ["https://images.unsplash.com/photo-1552824728-8b138121f000?auto=format&fit=crop&w=400&q=80"]
+      }
+    ];
+
+    let currentCategory = "Todos";
+    let cart = JSON.parse(localStorage.getItem('steam_py_cart')) || [];
+
+    // Inicialización
+    function init() {
+      setupHero(games[0]);
+      renderGames();
+      updateCartUI();
+    }
+
+    // Hero / Destacado
+    function setupHero(game) {
+      document.getElementById("heroImg").style.backgroundImage = `url('${game.img}')`;
+      document.getElementById("heroTitle").innerText = game.title;
+      document.getElementById("heroDesc").innerText = game.desc;
+      
+      const priceText = game.price === 0 ? "Gratuito" : `Gs. ${game.price.toLocaleString("es-PY")}`;
+      document.getElementById("heroPrice").innerText = priceText;
+      
+      const discBadge = document.getElementById("heroDiscount");
+      if(game.discount > 0) {
+        discBadge.style.display = "inline-block";
+        discBadge.innerText = `-${game.discount}%`;
+      } else {
+        discBadge.style.display = "none";
+      }
+
+      const thumbsContainer = document.getElementById("heroThumbs");
+      thumbsContainer.innerHTML = "";
+      game.screens.forEach((sc, idx) => {
+        thumbsContainer.innerHTML += `
+          <div class="hero-thumb ${idx===0?'active':''}" style="background-image: url('${sc}')" onclick="setHeroBg('${sc}', this)"></div>
+        `;
+      });
+
+      document.getElementById("heroBuyBtn").onclick = () => addToCart(game.id);
+    }
+
+    function setHeroBg(url, el) {
+      document.getElementById("heroImg").style.backgroundImage = `url('${url}')`;
+      document.querySelectorAll(".hero-thumb").forEach(t => t.classList.remove("active"));
+      el.classList.add("active");
+    }
+
+    // Filtros y Renderizado de catálogo
+    function filterCategory(cat, el) {
+      currentCategory = cat;
+      document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+      el.classList.add("active");
+      renderGames();
+    }
+
+    function renderGames() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const grid = document.getElementById("gameGrid");
+      grid.innerHTML = "";
+
+      const filtered = games.filter(g => {
+        const matchesCat = currentCategory === "Todos" || g.category === currentCategory;
+        const matchesSearch = g.title.toLowerCase().includes(query) || g.category.toLowerCase().includes(query);
+        return matchesCat && matchesSearch;
+      });
+
+      filtered.forEach(g => {
+        const priceDisplay = g.price === 0 ? "Gratis" : `Gs. ${g.price.toLocaleString("es-PY")}`;
+        grid.innerHTML += `
+          <div class="game-card" onclick="openModal(${g.id})">
+            <img src="${g.img}" alt="${g.title}">
+            <div class="card-body">
+              <div class="card-title">${g.title}</div>
+              <div class="card-tags">${g.category}</div>
+              <div class="card-footer">
+                <span style="font-weight:bold; color:#acdbf5; font-size:0.9rem;">${priceDisplay}</span>
+                <button class="btn-action" onclick="event.stopPropagation(); addToCart(${g.id})">🛒 Añadir</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Modal
+    function openModal(id) {
+      const g = games.find(x => x.id === id);
+      document.getElementById("modalTitle").innerText = g.title;
+      document.getElementById("modalImg").src = g.img;
+      document.getElementById("modalDesc").innerText = g.desc;
+      document.getElementById("modalPrice").innerText = g.price === 0 ? "Gratuito" : `Gs. ${g.price.toLocaleString("es-PY")}`;
+      document.getElementById("modalBuyBtn").onclick = () => { addToCart(g.id); closeModal(); };
+      document.getElementById("gameModal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.getElementById("gameModal").classList.remove("active");
+    }
+
+    // Carrito
+    function addToCart(id) {
+      const game = games.find(g => g.id === id);
+      cart.push(game);
+      saveCart();
+      updateCartUI();
+    }
+
+    function removeFromCart(idx) {
+      cart.splice(idx, 1);
+      saveCart();
+      updateCartUI();
+    }
+
+    function saveCart() {
+      localStorage.setItem('steam_py_cart', JSON.stringify(cart));
+    }
+
+    function updateCartUI() {
+      document.getElementById("cart-count").innerText = cart.length;
+      const container = document.getElementById("cartItems");
+      container.innerHTML = "";
+      
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        container.innerHTML += `
+          <div class="cart-item">
+            <div>
+              <div style="color:#fff; font-size:0.85rem; font-weight:bold;">${item.title}</div>
+              <div style="color:var(--accent-blue); font-size:0.8rem;">Gs. ${item.price.toLocaleString("es-PY")}</div>
+            </div>
+            <button style="color:#ff5252; background:none; border:none; cursor:pointer;" onclick="removeFromCart(${index})">Quitar</button>
+          </div>
+        `;
+      });
+
+      document.getElementById("cartTotal").innerText = `Gs. ${total.toLocaleString("es-PY")}`;
+    }
+
+    function toggleCart() {
+      document.getElementById("cartDrawer").classList.toggle("open");
+    }
+
+    function checkout() {
+      if(cart.length === 0) return alert("El carrito está vacío.");
+      alert("¡Gracias por tu compra en Steam Paraguay Pro!");
+      cart = [];
+      saveCart();
+      updateCartUI();
+      toggleCart();
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
